@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1c1c1c" />
+    <meta
+      name="description"
+      content="Omkar Shirvalkar's portfolio in macOS style."
+    />
+
+    <link rel="icon" href="/logo/favicon.svg" />
+    <link rel="apple-touch-icon" href="/logo/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Preload wallpaper to prevent flash on initial load -->
+    <link rel="preload" href="/img/ui/wallpaper.jpg" as="image" fetchpriority="high" />
+
+    <!-- DNS prefetch for external resources to reduce latency -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+    <title>Omkar Shirvalkar's Portfolio</title>
+
+    <!-- Prevent white flash before JS mounts: match macOS dark boot background -->
+    <style>
+      html, body, #root {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #1c1c1c;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DSL4Z03NFE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-DSL4Z03NFE");
+    </script>
+  </body>
+</html>
