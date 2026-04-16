@@ -1,23 +1,26 @@
 interface BootProps {
   restart: boolean;
   sleep: boolean;
+  firstLoad?: boolean;
   setBooting: (value: boolean | ((prevVar: boolean) => boolean)) => void;
 }
 
 const loadingInterval = 1;
 const bootingInterval = 500;
 
-export default function Boot({ restart, sleep, setBooting }: BootProps) {
+export default function Boot({ restart, sleep, firstLoad, setBooting }: BootProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [percent, setPercent] = useState<number>(0);
 
   useEffect(() => {
     if (restart && !sleep) setLoading(true);
-  }, [restart, sleep]);
+    // On first load, automatically start the boot progress bar
+    if (firstLoad && !restart && !sleep) setLoading(true);
+  }, [restart, sleep, firstLoad]);
 
   useInterval(
     () => {
-      const newPercent = percent + 0.15;
+      const newPercent = percent + 0.35;
       if (newPercent >= 100) {
         setTimeout(() => {
           setBooting(false);
@@ -30,7 +33,7 @@ export default function Boot({ restart, sleep, setBooting }: BootProps) {
 
   const handleClick = () => {
     if (sleep) setBooting(false);
-    else if (restart || loading) return;
+    else if (restart || loading || firstLoad) return;
     else setLoading(true);
   };
 
@@ -50,7 +53,7 @@ export default function Boot({ restart, sleep, setBooting }: BootProps) {
           />
         </div>
       )}
-      {!restart && !loading && (
+      {!restart && !loading && !firstLoad && (
         <div
           pos="absolute top-1/2 inset-x-0"
           m="t-16 sm:t-20 x-auto"
