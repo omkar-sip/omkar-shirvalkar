@@ -1,8 +1,8 @@
 import type { WallpaperData } from "~/types";
 
 const wallpapers: WallpaperData = {
-  day: "img/ui/wallpaper.jpg",
-  night: "img/ui/wallpaper.jpg"
+  day: "img/ui/2.jpg",
+  night: "img/ui/1.jpg"
 };
 
 export default wallpapers;

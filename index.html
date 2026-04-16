@@ -17,8 +17,9 @@
     -->
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Preload wallpaper to prevent flash on initial load -->
-    <link rel="preload" href="/img/ui/wallpaper.jpg" as="image" fetchpriority="high" />
+    <!-- Preload both wallpapers to prevent flash on initial load and dark/light toggle -->
+    <link rel="preload" href="/img/ui/2.jpg" as="image" fetchpriority="high" />
+    <link rel="preload" href="/img/ui/1.jpg" as="image" fetchpriority="low" />
 
     <!-- DNS prefetch for external resources to reduce latency -->
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
