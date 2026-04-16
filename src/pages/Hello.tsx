@@ -1,16 +1,28 @@
-import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import Lottie, { type LottieRefCurrentProps } from "lottie-react";
 
 interface HelloProps {
   onComplete: () => void;
 }
 
+const TOTAL_DURATION_MS = 6000;
+
 export default function Hello({ onComplete }: HelloProps) {
+  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const [animationData, setAnimationData] = useState<object | null>(null);
+  const [fetchError, setFetchError] = useState(false);
+
   useEffect(() => {
-    // Total sequence: hello fades in (1s) + holds (1.5s) + subtitle fades in (0.8s) + holds (0.7s) = ~4s
-    const timer = setTimeout(() => {
-      onComplete();
-    }, 4200);
+    // Use Vite's BASE_URL so this works both locally and on GitHub Pages (/omkar-shirvalkar/)
+    fetch(`${import.meta.env.BASE_URL}animations/Welcome.json`)
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch(() => setFetchError(true));
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => onComplete(), TOTAL_DURATION_MS);
     return () => clearTimeout(timer);
   }, [onComplete]);
 
@@ -27,19 +39,18 @@ export default function Hello({ onComplete }: HelloProps) {
         position: "fixed",
         inset: 0,
         zIndex: 9999,
-        overflow: "hidden"
+        gap: "28px"
       }}
     >
-      {/* Apple Logo */}
+      {/* Apple Logo — larger */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        style={{ marginBottom: "48px" }}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <svg
-          width="60"
-          height="72"
+          width="72"
+          height="86"
           viewBox="0 0 196 236"
           fill="white"
           xmlns="http://www.w3.org/2000/svg"
@@ -48,59 +59,65 @@ export default function Hello({ onComplete }: HelloProps) {
         </svg>
       </motion.div>
 
-      {/* "hello." Typography */}
+      {/* Lottie "Welcome" animation — large and centered */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: animationData ? 1 : 0, scale: 1 }}
+        transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          fontFamily: "'SF Pro Display', 'Helvetica Neue', 'Segoe UI', sans-serif",
-          fontSize: "clamp(72px, 12vw, 120px)",
-          fontWeight: 300,
-          color: "#ffffff",
-          letterSpacing: "-0.02em",
-          lineHeight: 1,
-          fontStyle: "italic",
-          marginBottom: "24px"
+          width: "min(90vw, 760px)",
+          /* natural aspect ratio of the Lottie canvas: 428 / 123 ≈ 3.48 */
+          aspectRatio: "428 / 123",
+          position: "relative"
         }}
       >
-        hello.
+        {animationData && (
+          <Lottie
+            lottieRef={lottieRef}
+            animationData={animationData}
+            loop={false}
+            autoplay={true}
+            style={{ width: "100%", height: "100%" }}
+            rendererSettings={{
+              preserveAspectRatio: "xMidYMid meet",
+              progressiveLoad: false
+            }}
+          />
+        )}
+        {fetchError && (
+          <div
+            style={{
+              fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
+              fontSize: "clamp(60px, 10vw, 110px)",
+              fontWeight: 300,
+              fontStyle: "italic",
+              color: "#fff",
+              textAlign: "center"
+            }}
+          >
+            Welcome
+          </div>
+        )}
       </motion.div>
 
-      {/* Welcome note */}
+      {/* Subtitle */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.9, delay: 2.0, ease: "easeOut" }}
+        transition={{ duration: 1.0, delay: 1.6, ease: "easeOut" }}
         style={{
           fontFamily: "'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif",
-          fontSize: "clamp(14px, 2vw, 18px)",
+          fontSize: "clamp(13px, 1.8vw, 17px)",
           fontWeight: 400,
-          color: "rgba(255,255,255,0.55)",
-          letterSpacing: "0.08em",
+          color: "rgba(255,255,255,0.5)",
+          letterSpacing: "0.12em",
           textTransform: "uppercase",
-          marginTop: 0
+          margin: 0
         }}
       >
-        Welcome to Omkar's Portfolio
+        to Omkar's Portfolio
       </motion.p>
-
-      {/* Subtle bottom gradient shimmer */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2.0, delay: 0.8, ease: "easeOut" }}
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "200px",
-          background:
-            "linear-gradient(to top, rgba(30,30,30,0.25), transparent)",
-          pointerEvents: "none"
-        }}
-      />
     </div>
   );
 }
+
